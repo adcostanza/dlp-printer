@@ -1,0 +1,20 @@
+PShape bot;
+int num = 0;
+int i = 0;
+void setup() {
+  size(640, 360);
+  background(#d1d1e0);
+  File theDir = new File("/job/");
+   String[] theList = theDir.list();
+   int fileCount = theList.length;
+   num = fileCount;
+   println(str(num) + " files");
+} 
+
+void draw(){
+  background(102);
+  
+  bot = loadShape("layer"+i+".svg");
+  shape(bot, 110, 90);  // Draw at coordinate (110, 90) at size 100 x 100
+  
+}
