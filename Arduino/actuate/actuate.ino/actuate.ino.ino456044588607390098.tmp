@@ -89,19 +89,15 @@ void loop() {
   
   while(Serial.available() > 0) {
     //serialReceived = true;
-    req = Serial.parseInt();
+    int req = Serial.parseInt();
     Serial <<"Command " << req << " requested from Serial\n";
-    
-  }
-  //position at zero
+    //position at zero
     if(req == 0) {
       position(zero);
-      req = -1;
     }
     //move up a layer
     if(req == 1) {
       nextLayer();
-      req = -1;
     }
     //for positioning build liquid
     if(req == 2) {
@@ -109,10 +105,14 @@ void loop() {
       position(zero+150);
       req = -1;
     }
+  }
     //position before receiving serial data
     if(!atZero) {
       //position at zero from pos feedback
       position(zero);
+    } else {
+      //nextLayer();
+      //stop_t(5000);
     }
   }
 
