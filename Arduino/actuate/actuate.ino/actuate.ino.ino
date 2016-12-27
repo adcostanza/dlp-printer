@@ -8,8 +8,8 @@ int power = A2;
 int dir = A4;
 float bottom = 25;
 float zero = bottom+152.4; //6in
-bool serialReceived = false;
-bool atZero = false;
+
+int req = -1;
 
 void backward_t(int t) {
   analogWrite(power,255);
@@ -51,8 +51,7 @@ void position(double wanted) {
       //now fine
       if(pos >= wanted - 0.25 && pos <= wanted + 0.25) {
         Serial << "Found zero, waiting for serial\n";
-        atZero = true;
-        
+        req = -1;
       } else if(pos < wanted) {
           _step(0);
       } else {
@@ -61,10 +60,10 @@ void position(double wanted) {
     }
     else if(pos < wanted) {
       forward_t(1000);
-      Serial << "Actual :" << pos << "\n" << "Wanted: " << wanted << serialReceived << "\n\n";
+      Serial << "Actual :" << pos << "\n" << "Wanted: " << wanted << "\n\n";
     }else if (pos > wanted) {
       backward_t(1000);
-      Serial << "Actual :" << pos << "\n" << "Wanted: " << wanted << serialReceived << "\n\n";
+      Serial << "Actual :" << pos << "\n" << "Wanted: " << wanted << "\n\n";
     }
 }
 double _pos() {
@@ -78,7 +77,6 @@ void setup() {
   pinMode(dir,OUTPUT);
   Serial.begin(9600);
 }
-int req = -1;
 void loop() {
   //943 max
   //29 min
@@ -89,14 +87,18 @@ void loop() {
   
   while(Serial.available() > 0) {
     //serialReceived = true;
-    req = Serial.parseInt();
-    Serial <<"Command " << req << " requested from Serial\n";
+    if(req == -1) {
+      req = Serial.parseInt();
+      Serial <<"Command " << req << " requested from Serial\n";
+    } else {
+      Serial << "Waiting to complete current command\n";
+    }
+    
     
   }
   //position at zero
     if(req == 0) {
       position(zero);
-      req = -1;
     }
     //move up a layer
     if(req == 1) {
@@ -107,18 +109,5 @@ void loop() {
     if(req == 2) {
       Serial << "Positioning 6in above zero for placement of build liquid\n";
       position(zero+150);
-      req = -1;
-    }
-    //position before receiving serial data
-    if(!atZero) {
-      //position at zero from pos feedback
-      position(zero);
     }
   }
-
-  
-  
-
-
-
-

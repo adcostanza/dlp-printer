@@ -1,0 +1,29 @@
+import processing.serial.*;
+import processing.opengl.*;
+PShape bot;
+int num = 0;
+int i = 0;
+int cmd = 1;
+Serial s;
+void setup() {
+  size(400,400,OPENGL);
+  frame.setLocation(1024,0);
+  background(0);
+  //fullScreen();
+  printArray(Serial.list());
+  s = new Serial(this, Serial.list()[2],9600);
+  s.write(cmd);
+} 
+
+void draw(){
+  
+  bot = loadShape("job/layer"+i+".svg");
+  shape(bot, 510, 300,500,500);  // Draw at coordinate (110, 90) at size 100 x 100
+  delay(3000);
+  //s.write(2);
+  i=i+1;
+  while(s.available() > 0) {
+    String r = s.readString();
+    println(r);
+  }
+}
