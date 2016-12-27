@@ -4,12 +4,14 @@
 //A4 is blue
 //A2 on off
 // A4 direction
-int power = A2;
+int power = 5;
 int dir = A4;
 float bottom = 25;
 float zero = bottom+152.4; //6in
 
 int req = -1;
+long timer;
+boolean setTimer = true;
 
 void backward_t(int t) {
   analogWrite(power,255);
@@ -31,31 +33,41 @@ void stop_t(int t) {
   delay(t);
 }
 void _step(int dir_) {
-  analogWrite(power,255);
-  analogWrite(dir,dir_);
-  delay(200);
-  analogWrite(power,0);
+  int t = 50;
+      analogWrite(dir,dir_);
+      delay(50);
+      digitalWrite(power,255);
+      delay(t);
+      digitalWrite(power,0);
+      delay(t*2);
+    
+  
 }
 void nextLayer() {
   double pos = _pos();
   Serial << "Position: " << pos << "\n";
   Serial << "Stepping 0.33mm into vat \n";
-  _step(255); 
+  position(_pos() - 0.33);
 }
 
 void position(double wanted) {
   double pos = _pos();
   if (pos >= wanted - 3 && pos <= wanted + 3){ 
-      _stop();
+      //_stop();
       Serial << "Close to zero\n"<< "Actual :" << pos << "\n" << "Wanted: " << wanted << "\n";
       //now fine
       if(pos >= wanted - 0.25 && pos <= wanted + 0.25) {
         Serial << "Found zero, waiting for serial\n";
+        _stop();
         req = -1;
-      } else if(pos < wanted) {
-          _step(0);
       } else {
+        if(pos < wanted) {
+      
+          _step(0);
+      }
+      if(pos>wanted) {
           _step(255);
+      }
       }
     }
     else if(pos < wanted) {

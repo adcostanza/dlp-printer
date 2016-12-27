@@ -13,7 +13,7 @@ void setup() {
   background(0);
   //fullScreen();
   printArray(Serial.list());
-  
+  //size(1280,800);
   fullScreen(2);
   s = new Serial(this, Serial.list()[1],9600);
   show = true;
@@ -24,37 +24,34 @@ void setup() {
 
 void draw(){
   
-  
-  println(abs(timer - millis()));
   while(s.available() > 0) {
     String r = s.readString();
     println(r);
   }
+  
+  
   if(show) {
-    if (!shown) {
-      showImage();
-      timer = millis();
-      shown = true;
-    } 
-    else if (abs(timer-millis()) >= 5000) {
-      timer = millis();
-      show = false;
-    }
-  } else {
-     if (timer - millis() <= 2000) {
-      nextLayer();
-    } 
-    
+    showImage();
+    show = false;
+    shown = true;
+    println("Showing image "+ i);
   }
+  if(abs(millis() - timer) >= 5000 && shown) {
+    i = i+1;
+    timer = millis();
+    shown = false;
+    nextLayer();
+  }
+  
+  
  
 }
 void nextLayer () {
-  background(0);
+  //background(0);
   cmd = 1;
   s.write("1");
+  delay(1000);
   show = true;
-  timer = millis();
-  shown = false;
 }
 void showImage() {
   String j = "";
@@ -66,6 +63,5 @@ void showImage() {
   //show current image
   background(0);
   image(img, 0, 0, 1280, 800);  // Draw at coordinate (110, 90) at size 100 x 100
-  println("Showing image: "+name);
-  i=i+1;
+  
 }
