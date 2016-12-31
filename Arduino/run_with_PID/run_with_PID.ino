@@ -8,13 +8,13 @@
 Servo bobbin;
 Encoder pos(2,7);
 double actual = 0;
-double wanted = 80;
+double wanted = 0;
 unsigned long spTimer;
-double sp = 80;
+double sp = 93;
 unsigned long serialTimer;
 
-PID control = PID(&actual,&sp,&wanted,3,0,.05, REVERSE);
-PID_ATune tune = PID_ATune(&actual,&sp);
+PID control = PID(&actual,&sp,&wanted,2.5,1,0.05, REVERSE);
+//PID_ATune tune = PID_ATune(&actual,&sp);
 
 void setup() {
   // put your setup code here, to run once:
@@ -24,9 +24,9 @@ void setup() {
   control.SetOutputLimits(87,93);
   control.SetMode(AUTOMATIC);
   control.SetSampleTime(50);
-  tune.SetOutputStep(1);
-  tune.SetControlType(1); //pid
-  
+  //tune.SetOutputStep(1);
+  //tune.SetControlType(0); //pid
+  serialTimer = micros();
 }
 void updateEnc() {
   actual = double(pos.read());
@@ -34,16 +34,17 @@ void updateEnc() {
 
 void loop() {
   while(Serial.available() > 0) {
-    int data = Serial.read();
-    wanted = double(data);
+    int data = Serial.parseInt();
+    wanted += double(data);
   }
   updateEnc();
-  //control.Compute();
-  int _run = tune.Runtime();
+  control.Compute();
+  //int _run = tune.Runtime();
   bobbin.write(sp);
-  
-  if(_run) {
-    Serial << tune.GetKp() << "," << tune.GetKi() << "," << tune.GetKd() << "\n";
+  //Serial << sp << "\n";
+  if(micros()-serialTimer > 1000) {
+    Serial<<"Wanted: "<<wanted<<", Actual: "<<actual<<", Speed: "<<sp<<"\n";
+    serialTimer = micros();
   }
   
   
