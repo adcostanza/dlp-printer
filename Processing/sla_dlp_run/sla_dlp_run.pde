@@ -6,8 +6,9 @@ int i = 0;
 PImage img;
 Serial s;
 long timer = 0;
-boolean show = false;
+boolean show = true;
 boolean shown = false;
+boolean black = true;
 void setup() {
   
   background(0);
@@ -16,7 +17,6 @@ void setup() {
   //size(1280,800);
   fullScreen(2);
   s = new Serial(this, Serial.list()[1],9600);
-  show = true;
   //set timer for first image
   timer = millis();
 } 
@@ -30,22 +30,27 @@ void draw(){
   }
   
   
-  if(show && !shown) {
-    timer = millis();
+  if(millis()-timer < 5000) {
+    
+    if(show) {
+      println("Showing image "+ i);
+      timer = millis();
+    }
     showImage();
-    show = false;
-    shown = true;
-    println("Showing image "+ i);
   }
-  if(millis() - timer >= 10000 && shown) {
-    delay(3000);
+  if((millis() - timer) >= 5000 && !black) {
+    background(0);
+    black = true;
+  }
+   if((millis() - timer) >= 5000 && black) {
+    background(0);
     println("Switching layers");
     i = i+1;
     
     s.write(binary(1));
     //wait till in location
     while(s.available() <= 0) {
-      background(0,0,0);
+      background(0);
       println("Waiting for response");
       delay(1000);
     }
@@ -67,6 +72,8 @@ void showImage() {
   img = loadImage(name);
   //show current image
   background(0);
+  black=false;
+  show  = false;
+  shown = true;
   image(img, 0, 0, 1280, 800);  // Draw at coordinate (110, 90) at size 100 x 100
-  
 }
