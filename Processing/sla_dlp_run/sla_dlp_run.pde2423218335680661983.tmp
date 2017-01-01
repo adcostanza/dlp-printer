@@ -30,28 +30,26 @@ void draw(){
   }
   
   
-  if(show && !shown) {
+  if(show) {
     timer = millis();
     showImage();
     show = false;
     shown = true;
+    delay(5000);
     println("Showing image "+ i);
   }
-  if(millis() - timer >= 10000 && shown) {
-    delay(3000);
-    println("Switching layers");
+  if(millis() - timer >= 5000 && shown) {
     i = i+1;
-    
+    shown = false;
+    show = true;
     s.write(binary(1));
     //wait till in location
     while(s.available() <= 0) {
-      background(0,0,0);
       println("Waiting for response");
-      delay(1000);
+      delay(300);
     }
+    
     timer = millis();
-    shown = false;
-    show = true;
   }
   
   

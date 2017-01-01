@@ -19,45 +19,40 @@ void setup() {
   show = true;
   //set timer for first image
   timer = millis();
+  //s.write(cmd);
 } 
 
 void draw(){
   
   while(s.available() > 0) {
     String r = s.readString();
-    print("From serial: ");
     println(r);
   }
   
   
-  if(show && !shown) {
-    timer = millis();
+  if(show) {
     showImage();
     show = false;
     shown = true;
     println("Showing image "+ i);
   }
-  if(millis() - timer >= 10000 && shown) {
-    delay(3000);
-    println("Switching layers");
+  if(abs(millis() - timer) >= 5000 && shown) {
     i = i+1;
-    
-    s.write(binary(1));
-    //wait till in location
-    while(s.available() <= 0) {
-      background(0,0,0);
-      println("Waiting for response");
-      delay(1000);
-    }
     timer = millis();
     shown = false;
-    show = true;
+    nextLayer();
   }
   
   
  
 }
-
+void nextLayer () {
+  //background(0);
+  cmd = 1;
+  s.write('1');
+  delay(1000);
+  show = true;
+}
 void showImage() {
   String j = "";
   if(i < 10) j = "0" + str(i);

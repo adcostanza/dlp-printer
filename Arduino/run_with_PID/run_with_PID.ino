@@ -12,11 +12,11 @@ double wanted = 0;
 unsigned long spTimer;
 double sp = 90;
 unsigned long serialTimer;
+bool known = false;
+int request = 0; //idle
 
-int outLow = 88;
-int outHigh = 92;
 
-PID control = PID(&actual,&sp,&wanted,1,.25,.25, REVERSE);
+PID control = PID(&actual,&sp,&wanted,1,.25,.2, REVERSE);
 //PID_ATune tune = PID_ATune(&actual,&sp);
 
 void setup() {
@@ -24,7 +24,7 @@ void setup() {
   bobbin.attach(6);
   Serial.begin(9600);
   serialTimer = millis();
-  control.SetOutputLimits(outLow,outHigh);
+  control.SetOutputLimits(88,92);
   control.SetMode(AUTOMATIC);
   control.SetSampleTime(200);
   //tune.SetOutputStep(1);
@@ -38,25 +38,25 @@ void updateEnc() {
 void loop() {
   while(Serial.available() > 0) {
     int data = Serial.parseInt();
-    wanted += double(data);
+    wanted -= double(data);
   }
   updateEnc();
   if(abs(wanted-actual) > 10) {
-    outLow = 86;
-    outHigh = 96;
-  control.SetOutputLimits(outLow,outHigh);
+  control.SetOutputLimits(86,95);
   } else {
-    outLow = 88;
-    outHigh = 92;
-    
-  control.SetOutputLimits(outLow,outHigh);
+  control.SetOutputLimits(88,92);
   }
-  if(wanted != actual) control.Compute();
+  control.Compute();
+  if(actual != wanted) known = false;
+  if(actual == wanted && !known) {
+    Serial << "1\n";
+    known = true;
+  }
   //int _run = tune.Runtime();
   bobbin.write(sp);
   //Serial << sp << "\n";
   if(micros()-serialTimer > 1000) {
-    Serial<<"Wanted: "<<wanted<<", Actual: "<<actual<<", Speed: "<<sp<<"\n";
+    //Serial<<"Wanted: "<<wanted<<", Actual: "<<actual<<", Speed: "<<sp<<"\n";
     serialTimer = micros();
   }
   
