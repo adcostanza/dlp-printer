@@ -14,9 +14,10 @@ double sp = 90;
 unsigned long serialTimer;
 bool known = false;
 int request = 0; //idle
+bool step = false;
 
 
-PID control = PID(&actual,&sp,&wanted,1,.25,.2, REVERSE);
+PID control = PID(&actual,&sp,&wanted,1.5,1,.2, REVERSE);
 //PID_ATune tune = PID_ATune(&actual,&sp);
 
 void setup() {
@@ -38,9 +39,12 @@ void updateEnc() {
 void loop() {
   while(Serial.available() > 0) {
     int data = Serial.parseInt();
+    if(data==1) step = true;
     wanted -= double(data);
   }
   updateEnc();
+
+  
   if(abs(wanted-actual) > 10) {
   control.SetOutputLimits(86,95);
   } else {

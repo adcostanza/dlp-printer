@@ -26,7 +26,7 @@ void showImage() {
   //name = "job/out0013.png";
   img = loadImage(name);
   show  = false;
-  image(img, 0, 0, 1280, 800); 
+  image(img, 1280/2-200, 800/2+10, 1280/2, 800/2); 
   found = false;
 }
 void draw(){
@@ -35,7 +35,7 @@ void draw(){
     thread2 = new MyThread2();
     thread2.start();
   }
-  if((millis() - timer) > 10000 && mode == 0) {
+  if((millis() - timer) > 25000 && mode == 0) {
     mode = 1;
   }
  
@@ -79,7 +79,7 @@ void draw(){
       delay(1000);
           
     }
-    
+    delay(2000);
     timer = millis();
     i = i+1;
     mode = 0;
