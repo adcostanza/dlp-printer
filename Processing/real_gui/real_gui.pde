@@ -2,6 +2,8 @@
 import g4p_controls.*;
 import processing.serial.*;
 
+Serial s;
+int ser;
 public void setup(){
   size(800, 400, JAVA2D);
   createGUI();
@@ -20,4 +22,5 @@ public void draw(){
 public void customGUI(){
   
   serialList.setItems(Serial.list(),0);
+  println(serialToggle);
 }

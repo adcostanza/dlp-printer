@@ -14,10 +14,6 @@
  * =========================================================
  */
 
-public void dropList1_click1(GDropList source, GEvent event) { //_CODE_:serialList:312105:
-  println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
-} //_CODE_:serialList:312105:
-
 public void button1_click1(GButton source, GEvent event) { //_CODE_:button1:243438:
   println("button1 - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:button1:243438:
@@ -38,9 +34,31 @@ public void imgButton2_click1(GImageButton source, GEvent event) { //_CODE_:imgB
   println("imgButton2 - GImageButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:imgButton2:479051:
 
-public void imgTogButton1_click1(GImageToggleButton source, GEvent event) { //_CODE_:imgTogButton1:411883:
-  println("imgTogButton1 - GImageToggleButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:imgTogButton1:411883:
+public void serialToggle_event(GImageToggleButton source, GEvent event) { //_CODE_:serialToggle:411883:
+  if(serialToggle.getState() == 1 ) {
+      
+    try {
+      s = new Serial(this, Serial.list()[ser],9600);
+      s.write(1);
+    } catch (RuntimeException e) {
+        e.printStackTrace();
+        s.stop();
+        serialToggle.setState(0);
+    }
+    println("Serial turned on");
+  } else {
+    println("Serial turned off");
+    s.stop();
+  }
+} //_CODE_:serialToggle:411883:
+
+public void serialList_click2(GDropList source, GEvent event) { //_CODE_:serialList:280560:
+  println("serialList - GDropList >> GEvent." + event + " @ " + millis());
+} //_CODE_:serialList:280560:
+
+public void serialTimer_action(GTimer source) { //_CODE_:serialTimer:982968:
+  println("serialTimer - GTimer >> an event occured @ " + millis());
+} //_CODE_:serialTimer:982968:
 
 
 
@@ -65,9 +83,6 @@ public void createGUI(){
   label5.setText("Serial Port");
   label5.setTextBold();
   label5.setOpaque(false);
-  serialList = new GDropList(this, 20, 160, 100, 80, 3);
-  serialList.setItems(loadStrings("list_312105"), 0);
-  serialList.addEventHandler(this, "dropList1_click1");
   button1 = new GButton(this, 380, 290, 170, 90);
   button1.setText("START PRINT");
   button1.setTextBold();
@@ -120,7 +135,7 @@ public void createGUI(){
   label12.setText("Time Elapsed:");
   label12.setTextBold();
   label12.setOpaque(false);
-  label11 = new GLabel(this, 190, 50, 120, 20);
+  label11 = new GLabel(this, 170, 50, 120, 20);
   label11.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label11.setText("Current Image:");
   label11.setTextBold();
@@ -129,13 +144,17 @@ public void createGUI(){
   imgButton1.addEventHandler(this, "imgButton1_click1");
   imgButton2 = new GImageButton(this, 130, 40, 480, 300, new String[] { "out0011.png", "out0011.png", "out0011.png" } );
   imgButton2.addEventHandler(this, "imgButton2_click1");
-  imgTogButton1 = new GImageToggleButton(this, 70, 260);
-  imgTogButton1.addEventHandler(this, "imgTogButton1_click1");
+  serialToggle = new GImageToggleButton(this, 70, 260);
+  serialToggle.addEventHandler(this, "serialToggle_event");
   label4 = new GLabel(this, 40, 240, 100, 20);
   label4.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label4.setText("on");
   label4.setOpaque(false);
   sketchPad1 = new GSketchPad(this, 360, 170, 80, 60);
+  serialList = new GDropList(this, 20, 160, 100, 80, 3);
+  serialList.setItems(loadStrings("blank"), 0);
+  serialList.addEventHandler(this, "serialList_click2");
+  serialTimer = new GTimer(this, this, "serialTimer_action", 1000);
 }
 
 // Variable declarations 
@@ -143,7 +162,6 @@ public void createGUI(){
 GLabel label2; 
 GLabel label3; 
 GLabel label5; 
-GDropList serialList; 
 GButton button1; 
 GTextField job; 
 GButton button2; 
@@ -158,6 +176,8 @@ GLabel label12;
 GLabel label11; 
 GImageButton imgButton1; 
 GImageButton imgButton2; 
-GImageToggleButton imgTogButton1; 
+GImageToggleButton serialToggle; 
 GLabel label4; 
 GSketchPad sketchPad1; 
+GDropList serialList; 
+GTimer serialTimer; 
