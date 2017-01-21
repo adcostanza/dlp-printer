@@ -19,8 +19,16 @@ void loop() {
   while(Serial.available() > 0) {
     int data = Serial.parseInt();
     wanted += data*lh;
+    if(data == 1) {
+      myStepper.setSpeed(50);
+      myStepper.step(-10*lh);
+      delay(1000);
+      myStepper.step(9*lh);
+    } else {
+      myStepper.step(lh * data);
+    }
     if(data > 10) myStepper.setSpeed(100);
     else myStepper.setSpeed(50);
-    myStepper.step(lh * data);
+    
   }
 }

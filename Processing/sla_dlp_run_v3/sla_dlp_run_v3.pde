@@ -35,7 +35,7 @@ void draw(){
     thread2 = new MyThread2();
     thread2.start();
   }
-  if((millis() - timer) > 25000 && mode == 0) {
+  if((millis() - timer) > 2000 && mode == 0) {
     mode = 1;
   }
  
@@ -72,14 +72,12 @@ void draw(){
    }
    public void run()
    {
+     int v = -1;
       s.write(binary(1));
-    //wait till in location
-    while(!found) {
-      println("Waiting for response");
-      delay(1000);
+    //delay till in location
+    delay(3000);
           
-    }
-    delay(2000);
+    
     timer = millis();
     i = i+1;
     mode = 0;
