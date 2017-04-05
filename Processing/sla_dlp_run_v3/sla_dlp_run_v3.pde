@@ -3,7 +3,7 @@ import javax.swing.*;
 PImage img;
 Serial s;
 boolean show = true;
-int i = 0;
+int i = 43;
 long timer = millis();
 int mode = 0;
 MyThread thread;
@@ -26,7 +26,7 @@ void showImage() {
   //name = "job/out0013.png";
   img = loadImage(name);
   show  = false;
-  image(img, 1280/2-200, 800/2+10, 1280/2, 800/2); 
+  image(img, 1280/2-250, 800/2-30, 1280/2, 800/2); 
   found = false;
 }
 void draw(){
@@ -35,7 +35,7 @@ void draw(){
     thread2 = new MyThread2();
     thread2.start();
   }
-  if((millis() - timer) > 2000 && mode == 0) {
+  if((millis() - timer) > 2000 && mode == 0) { 
     mode = 1;
   }
  
@@ -44,7 +44,7 @@ void draw(){
     if(show) {
       
       showImage();
-      println("Showing image");
+      println("Showing image "+i);
       
     }
   }
@@ -75,7 +75,7 @@ void draw(){
      int v = -1;
       s.write(binary(1));
     //delay till in location
-    delay(3000);
+    delay(5000);
           
     
     timer = millis();

@@ -21,9 +21,10 @@ void loop() {
     wanted += data*lh;
     if(data == 1) {
       myStepper.setSpeed(50);
-      myStepper.step(-10*lh);
+      myStepper.step(-30*lh); //let liquid flow over piece
       delay(1000);
-      myStepper.step(9*lh);
+      myStepper.step(28*lh); //move up to correct layer height after300
+      
     } else {
       myStepper.step(lh * data);
     }
